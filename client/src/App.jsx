@@ -59,8 +59,14 @@ const App = () => {
             emitLocationUpdate({ lat: latitude, lng: longitude, role: userRole, address });
         };
 
-        const handleError = () => {
-            alert('Location permission denied. Please allow location access.');
+        const handleError = (error) => {
+            if (error.code === error.PERMISSION_DENIED) {
+                alert('Location permission denied. Please click the lock icon in your URL bar and allow location access.');
+            } else if (error.code === error.TIMEOUT) {
+                alert('Location request timed out. Make sure your GPS is turned on and try again.');
+            } else {
+                alert('Location unavailable. Please check your device location settings.');
+            }
         };
 
         const searchParams = new URLSearchParams(window.location.search);
@@ -70,7 +76,7 @@ const App = () => {
             const watchId = navigator.geolocation.watchPosition(handleLocation, handleError, {
                 enableHighAccuracy: true,
                 maximumAge: 0,
-                timeout: 5000
+                timeout: 15000
             });
             // Cleanup on dismount
             socket.on('disconnect', () => navigator.geolocation.clearWatch(watchId));
@@ -78,7 +84,7 @@ const App = () => {
             navigator.geolocation.getCurrentPosition(handleLocation, handleError, {
                 enableHighAccuracy: true,
                 maximumAge: 0,
-                timeout: 5000
+                timeout: 15000
             });
         }
 
