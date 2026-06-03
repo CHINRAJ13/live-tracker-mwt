@@ -49,7 +49,7 @@ const App = () => {
             let address = '';
             if (userRole === 'customer') {
                 try {
-                    const res = await axios.post('http://localhost:4000/api/locations/address', { lat: latitude, lng: longitude });
+                    const res = await axios.post('https://live-tracker-mwt.onrender.com/api/locations/address', { lat: latitude, lng: longitude });
                     address = res.data.address;
                 } catch (err) {
                     console.error("Geocoding failed", err);
@@ -114,7 +114,7 @@ const App = () => {
             if (!me) return;
             setLoadingRoute(true);
             try {
-                const res = await axios.post('http://localhost:4000/api/locations/route', {
+                const res = await axios.post('https://live-tracker-mwt.onrender.com/api/locations/route', {
                     start: { lat: me.lat, lng: me.lng },
                     end: { lat: selectedUser.lat, lng: selectedUser.lng }
                 });
