@@ -46,17 +46,19 @@ const App = () => {
             const searchParams = new URLSearchParams(window.location.search);
             const userRole = searchParams.get('role') || 'customer';
 
-            let address = '';
+            // Emit physical coordinates IMMEDIATELY so the user appears on the map
+            emitLocationUpdate({ lat: latitude, lng: longitude, role: userRole, address: 'Fetching address...' });
+
             if (userRole === 'customer') {
                 try {
                     const res = await axios.post('https://live-tracker-mwt.onrender.com/api/locations/address', { lat: latitude, lng: longitude });
-                    address = res.data.address;
+                    // Re-emit with the actual fetched address
+                    emitLocationUpdate({ lat: latitude, lng: longitude, role: userRole, address: res.data.address });
                 } catch (err) {
+                    emitLocationUpdate({ lat: latitude, lng: longitude, role: userRole, address: 'Address not found' });
                     console.error("Geocoding failed", err);
                 }
             }
-
-            emitLocationUpdate({ lat: latitude, lng: longitude, role: userRole, address });
         };
 
         const handleError = (error) => {
